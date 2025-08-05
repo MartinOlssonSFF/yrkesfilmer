@@ -2,235 +2,37 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>VR Yrkeskollen</title>
-    <meta name="description" content="Utforska olika yrken i 360-video med VR Yrkeskollen.">
+    <title>VR Yrkeskollen - Diagnostiskt Test</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Importerar A-Frame biblioteket för VR-funktionalitet -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <!-- Komponent för att skapa snygga miljöer -->
     <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
-    <!-- Importerar A-Frame komponent för att spela YouTube-videos -->
-    <script src="https://unpkg.com/aframe-youtube-component@^2.0.0/dist/aframe-youtube-component.min.js"></script>
-    <!-- Google Fonts för en snyggare design -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-    <style>
-        /* Grundläggande styling för icke-VR vyn */
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #282c34;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
-        }
-        .intro-container {
-            max-width: 600px;
-            padding: 2rem;
-        }
-        h1 {
-            font-size: 2.5rem;
-            color: #61dafb;
-        }
-        p {
-            font-size: 1.2rem;
-            line-height: 1.6;
-        }
-        .callout {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #ffc107;
-            margin-top: 2rem;
-        }
-        /* Styling och animation för "Gå in i VR"-knappen */
-        .a-enter-vr-button {
-            background-color: #61dafb !important;
-            color: #282c34 !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-family: 'Roboto', sans-serif !important;
-            font-weight: bold !important;
-            font-size: 1.2rem !important;
-            padding: 1rem 1.5rem !important;
-            animation: pulse 2s infinite;
-            margin-top: 1rem;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(97, 218, 251, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 10px 20px rgba(97, 218, 251, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(97, 218, 251, 0); }
-        }
-    </style>
 </head>
-
 <body>
-    <!-- Denna div visas innan användaren går in i VR-läget -->
-    <div class="intro-container" id="intro">
-        <h1>Välkommen till VR Yrkeskollen!</h1>
-        <p>Här kan du kliva in i olika yrken och se hur en arbetsdag kan se ut. Ta på dig dina VR-glasögon för den bästa upplevelsen.</p>
-        <p>Har du inga VR-glasögon? Ingen fara! Du kan fortfarande se dig omkring genom att klicka och dra med musen på en dator, eller genom att röra på mobilen.</p>
-        <p class="callout">👇 Klicka på den blåa knappen nedan för att starta! 👇</p>
-    </div>
+    <a-scene>
+        <!-- Enkel miljö -->
+        <a-entity environment="preset: dream;"></a-entity>
 
-    <!-- A-Frame scenen som innehåller hela VR-upplevelsen -->
-    <a-scene id="vr-scene" vr-mode-ui="enabled: true; enterVRButton: .a-enter-vr-button" visible="false">
-        
-        <!-- === TILLGÅNGAR / ASSETS === -->
-        <a-assets>
-            <video id="video-ambulans" src="youtube://3e9q1jNQS-A" preload="auto" crossorigin="anonymous"></video>
-            <video id="video-underskoterska" src="youtube://JpS6xY-o3kU" preload="auto" crossorigin="anonymous"></video>
-            <video id="video-anlaggningsarbetare" src="youtube://9bX-hZCpqjY" preload="auto" crossorigin="anonymous"></video>
-            <video id="video-malare" src="youtube://j7fP4yK2vL0" preload="auto" crossorigin="anonymous"></video>
-            <video id="video-maskinoperator" src="youtube://5H8r7yI0hT4" preload="auto" crossorigin="anonymous"></video>
-            <video id="video-svetsare" src="youtube://o8M9iN3rTzM" preload="auto" crossorigin="anonymous"></video>
-            <video id="video-butik" src="youtube://tG5a8fN9wYk" preload="auto" crossorigin="anonymous"></video>
-            <video id="video-djurvardare" src="youtube://R5o-X8cQ4q0" preload="auto" crossorigin="anonymous"></video>
-            <video id="video-lastbilsmekaniker" src="youtube://wK9yD8wX_1M" preload="auto" crossorigin="anonymous"></video>
-        </a-assets>
-
-        <!-- === MILJÖ === -->
-        <a-entity environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1"></a-entity>
-        
-        <!-- Videosfären där 360-videon spelas upp. Den är osynlig från start. -->
-        <a-videosphere id="video-player" radius="99" visible="false" rotation="0 -90 0"></a-videosphere>
-
-        <!-- === ANVÄNDARENS KAMERA OCH INTERAKTION === -->
-        <a-camera>
-            <a-cursor raycaster="objects: .clickable" fuse="true" fuse-timeout="1500"></a-cursor>
-        </a-camera>
-
-        <!-- === MENY-SYSTEM === -->
-        <a-entity id="main-menu" position="0 1.6 -4" menu-manager></a-entity>
-        
-        <!-- En "Tillbaka"-knapp som visas när man tittar på en video. -->
-        <a-entity id="back-button" class="clickable" visible="false">
-             <a-plane color="#61dafb" width="1.2" height="0.5" position="0 0.5 -3" rounded="0.1" opacity="0.9"></a-plane>
-             <a-text value="Tillbaka till menyn" color="#282c34" align="center" width="2" position="0 0.5 -2.9"></a-text>
+        <!-- En enda, simpel knapp som är hårdkodad direkt i HTML. -->
+        <!-- Denna använder INGEN avancerad JavaScript för att skapas. -->
+        <a-entity position="0 1.6 -3">
+            <a-plane 
+                color="#4285F4" 
+                width="1.2" 
+                height="0.6" 
+                rounded="0.1">
+            </a-plane>
+            <a-text 
+                value="Testknapp" 
+                color="#FFFFFF" 
+                align="center" 
+                width="2.5">
+            </a-text>
         </a-entity>
 
+        <!-- Kamera med pekare -->
+        <a-camera>
+            <a-cursor></a-cursor>
+        </a-camera>
     </a-scene>
-
-    <script>
-        const careerData = [
-            { category: 'Vård & Omsorg', color: '#E74C3C', professions: [ { title: 'Ambulanssjukvårdare', videoId: 'video-ambulans' }, { title: 'Undersköterska', videoId: 'video-underskoterska' } ] },
-            { category: 'Bygg & Anläggning', color: '#F39C12', professions: [ { title: 'Anläggningsarbetare', videoId: 'video-anlaggningsarbetare' }, { title: 'Målare', videoId: 'video-malare' } ] },
-            { category: 'Industri & Teknik', color: '#3498DB', professions: [ { title: 'Maskinoperatör', videoId: 'video-maskinoperator' }, { title: 'Svetsare', videoId: 'video-svetsare' } ] },
-            { category: 'Transport & Fordon', color: '#9B59B6', professions: [ { title: 'Lastbilsmekaniker', videoId: 'video-lastbilsmekaniker' } ] },
-            { category: 'Service & Natur', color: '#2ECC71', professions: [ { title: 'Butikspersonal', videoId: 'video-butik' }, { title: 'Djurvårdare', videoId: 'video-djurvardare' } ] }
-        ];
-
-        // === NYCKELÄNDRING: VI DEFINIERAR EN EGEN KOMPONENT ===
-        AFRAME.registerComponent('menu-manager', {
-            init: function () {
-                const mainMenu = this.el;
-                const videoPlayer = document.querySelector('#video-player');
-                const backButton = document.querySelector('#back-button');
-
-                const clearMenu = () => {
-                    while (mainMenu.firstChild) {
-                        mainMenu.removeChild(mainMenu.firstChild);
-                    }
-                };
-                
-                // === NY LOGIK: Manuell positionering av knappar ===
-                const createMenu = (items, clickHandlers, options) => {
-                    clearMenu();
-                    const totalItems = items.length;
-                    const angleSpan = Math.PI * 1.5; // Sprid ut över 270 grader
-                    const startAngle = -angleSpan / 2;
-
-                    items.forEach((item, index) => {
-                        // Beräkna position på en cirkel
-                        const angle = startAngle + (index / (totalItems -1)) * angleSpan;
-                        const x = options.radius * Math.sin(angle);
-                        const z = options.radius * Math.cos(angle);
-
-                        const button = document.createElement('a-entity');
-                        button.classList.add('clickable');
-                        // Sätt den beräknade positionen
-                        button.setAttribute('position', `${x} 0 ${z}`);
-                        // Rotera knappen så den är vänd mot mitten
-                        button.setAttribute('rotation', `0 ${-angle * (180 / Math.PI)} 0`);
-
-                        button.innerHTML = `<a-plane color="${item.color || '#333'}" width="${options.width}" height="${options.height}" rounded="0.1" opacity="0.9"></a-plane><a-text value="${item.title}" color="#FFF" align="center" width="${options.width * 1.5}"></a-text>`;
-                        
-                        button.addEventListener('click', () => clickHandlers.itemClick(item));
-                        mainMenu.appendChild(button);
-                    });
-
-                    // Lägg till titel och ev. tillbaka-knapp
-                    const titleEl = document.createElement('a-entity');
-                    titleEl.setAttribute('position', `0 ${options.height * 2} 0`);
-                    titleEl.setAttribute('text', `value: ${options.title}; align: center; color: white; width: 6;`);
-                    mainMenu.appendChild(titleEl);
-
-                    if (clickHandlers.backClick) {
-                        const back = document.createElement('a-entity');
-                        back.classList.add('clickable');
-                        back.setAttribute('position', `0 -${options.height} 0`);
-                        back.innerHTML = `<a-plane color="#E74C3C" width="1.2" height="0.5" rounded="0.1"></a-plane><a-text value="Tillbaka" color="#FFF" align="center" width="2"></a-text>`;
-                        back.addEventListener('click', clickHandlers.backClick);
-                        mainMenu.appendChild(back);
-                    }
-                };
-
-                const createProfessionMenu = (category) => {
-                    createMenu(
-                        category.professions,
-                        { itemClick: (profession) => playVideo(profession.videoId), backClick: createCategoryMenu },
-                        { title: `Yrken inom ${category.category}`, radius: 3.5, width: 1.5, height: 0.6 }
-                    );
-                };
-                
-                const createCategoryMenu = () => {
-                    const categories = careerData.map(c => ({ title: c.category, color: c.color, original: c }));
-                    createMenu(
-                        categories,
-                        { itemClick: (item) => createProfessionMenu(item.original) },
-                        { title: 'Valj en bransch att utforska', radius: 4, width: 1.5, height: 0.8 }
-                    );
-                };
-
-                const playVideo = (videoId) => {
-                    mainMenu.setAttribute('visible', 'false');
-                    videoPlayer.setAttribute('src', `#${videoId}`);
-                    videoPlayer.setAttribute('visible', 'true');
-                    videoPlayer.components.youtube.play();
-                    backButton.setAttribute('visible', 'true');
-                };
-
-                const stopAndHideVideo = () => {
-                    if (videoPlayer.getAttribute('visible')) {
-                        videoPlayer.components.youtube.pause();
-                    }
-                    videoPlayer.setAttribute('visible', 'false');
-                    mainMenu.setAttribute('visible', 'true');
-                    backButton.setAttribute('visible', 'false');
-                };
-
-                backButton.addEventListener('click', stopAndHideVideo);
-                createCategoryMenu();
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const scene = document.querySelector('#vr-scene');
-            const intro = document.querySelector('#intro');
-            scene.addEventListener('enter-vr', () => {
-                intro.style.display = 'none';
-                scene.setAttribute('visible', 'true');
-            });
-            scene.addEventListener('exit-vr', () => {
-                intro.style.display = 'flex';
-                scene.setAttribute('visible', 'false');
-            });
-        });
-    </script>
 </body>
 </html>
