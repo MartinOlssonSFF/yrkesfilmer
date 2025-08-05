@@ -48,7 +48,6 @@
             </a-cursor>
         </a-camera>
         
-        <!-- NY STRUKTUR: En "vy" för menyn -->
         <a-entity id="menu-view" visible="true">
             <a-entity id="environment" environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1;"></a-entity>
             <a-entity id="menu-container" position="0 1.6 -4">
@@ -98,7 +97,6 @@
             </a-entity>
         </a-entity>
         
-        <!-- NY STRUKTUR: En "vy" för videon -->
         <a-entity id="video-view" visible="false">
             <a-videosphere id="video-player" radius="99" rotation="0 -90 0"></a-videosphere>
             <a-entity id="video-back-button" position="0 1.2 -3">
@@ -115,7 +113,6 @@
         const intro = document.querySelector('#intro');
         const scene = document.querySelector('#vr-scene');
         
-        // Våra två huvudvyer
         const menuView = document.querySelector('#menu-view');
         const videoView = document.querySelector('#video-view');
         
@@ -147,23 +144,31 @@
         };
 
         const playVideo = (videoId) => {
-            videoPlayer.setAttribute('src', `#${videoId}`);
-            videoPlayer.components.youtube.play();
-            
-            // Byt från meny-vy till video-vy
+            // NYCKELÄNDRING: Byt vy först.
             menuView.setAttribute('visible', false);
-            videoView.setAttribute('visible', true);
+            videoView.setAttribute('visible', 'true');
+
+            // Sätt videokällan.
+            videoPlayer.setAttribute('src', `#${videoId}`);
+            
+            // Ge komponenten en liten stund att ladda källan innan vi spelar.
+            // Detta förhindrar att funktionen kraschar.
+            setTimeout(() => {
+                if (videoPlayer.components.youtube) {
+                    videoPlayer.components.youtube.play();
+                }
+            }, 250); // 250ms fördröjning
         };
 
         const resetToMainMenu = () => {
-            if (videoPlayer.getAttribute('src')) { // Kontrollera om en video har spelats
+            if (videoPlayer.getAttribute('src')) {
                 videoPlayer.components.youtube.pause();
+                videoPlayer.setAttribute('src', ''); // Rensa källan för att stoppa nedladdning
             }
             
-            // Byt från video-vy till meny-vy
             videoView.setAttribute('visible', false);
             menuView.setAttribute('visible', 'true');
-            showMenu(categoryMenu); // Återställ till huvudmenyn
+            showMenu(categoryMenu);
         };
 
         // --- Koppla klickhändelser ---
