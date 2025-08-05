@@ -106,8 +106,7 @@
         </a-camera>
 
         <!-- === MENY-SYSTEM === -->
-        <!-- NYCKELÄNDRING: Vi lägger till vår egna komponent "menu-manager" som kommer att bygga menyn. -->
-        <a-entity id="main-menu" position="0 1.6 0" menu-manager></a-entity>
+        <a-entity id="main-menu" position="0 1.6 -4" menu-manager></a-entity>
         
         <!-- En "Tillbaka"-knapp som visas när man tittar på en video. -->
         <a-entity id="back-button" class="clickable" visible="false">
@@ -128,65 +127,76 @@
 
         // === NYCKELÄNDRING: VI DEFINIERAR EN EGEN KOMPONENT ===
         AFRAME.registerComponent('menu-manager', {
-            // 'init' är en speciell funktion som körs en gång när komponenten startar.
-            // Detta är den säkraste platsen att bygga menyn på.
             init: function () {
-                // 'this.el' refererar till den entity som komponenten sitter på (<a-entity id="main-menu">)
                 const mainMenu = this.el;
                 const videoPlayer = document.querySelector('#video-player');
                 const backButton = document.querySelector('#back-button');
 
-                // --- Funktioner för att hantera menyn ---
                 const clearMenu = () => {
                     while (mainMenu.firstChild) {
                         mainMenu.removeChild(mainMenu.firstChild);
                     }
                 };
-
-                const createProfessionMenu = (category) => {
+                
+                // === NY LOGIK: Manuell positionering av knappar ===
+                const createMenu = (items, clickHandlers, options) => {
                     clearMenu();
-                    mainMenu.setAttribute('layout', 'type: circle; radius: 3.5; plane: xz; angle: 200');
+                    const totalItems = items.length;
+                    const angleSpan = Math.PI * 1.5; // Sprid ut över 270 grader
+                    const startAngle = -angleSpan / 2;
 
-                    category.professions.forEach(profession => {
+                    items.forEach((item, index) => {
+                        // Beräkna position på en cirkel
+                        const angle = startAngle + (index / (totalItems -1)) * angleSpan;
+                        const x = options.radius * Math.sin(angle);
+                        const z = options.radius * Math.cos(angle);
+
                         const button = document.createElement('a-entity');
                         button.classList.add('clickable');
-                        button.innerHTML = `<a-plane color="#333" width="1.5" height="0.6" rounded="0.1" opacity="0.9"></a-plane><a-text value="${profession.title}" color="#FFF" align="center" width="2.5"></a-text>`;
-                        button.addEventListener('click', () => playVideo(profession.videoId));
+                        // Sätt den beräknade positionen
+                        button.setAttribute('position', `${x} 0 ${z}`);
+                        // Rotera knappen så den är vänd mot mitten
+                        button.setAttribute('rotation', `0 ${-angle * (180 / Math.PI)} 0`);
+
+                        button.innerHTML = `<a-plane color="${item.color || '#333'}" width="${options.width}" height="${options.height}" rounded="0.1" opacity="0.9"></a-plane><a-text value="${item.title}" color="#FFF" align="center" width="${options.width * 1.5}"></a-text>`;
+                        
+                        button.addEventListener('click', () => clickHandlers.itemClick(item));
                         mainMenu.appendChild(button);
                     });
 
-                    const back = document.createElement('a-entity');
-                    back.classList.add('clickable');
-                    back.setAttribute('position', '0 -1.5 0');
-                    back.innerHTML = `<a-plane color="#E74C3C" width="1.2" height="0.5" rounded="0.1"></a-plane><a-text value="Tillbaka" color="#FFF" align="center" width="2"></a-text>`;
-                    back.addEventListener('click', createCategoryMenu);
-                    mainMenu.appendChild(back);
+                    // Lägg till titel och ev. tillbaka-knapp
+                    const titleEl = document.createElement('a-entity');
+                    titleEl.setAttribute('position', `0 ${options.height * 2} 0`);
+                    titleEl.setAttribute('text', `value: ${options.title}; align: center; color: white; width: 6;`);
+                    mainMenu.appendChild(titleEl);
 
-                    const title = document.createElement('a-entity');
-                    title.setAttribute('position', '0 2.2 -4');
-                    title.setAttribute('text', `value: Yrken inom ${category.category}; align: center; color: white; width: 5;`);
-                    mainMenu.appendChild(title);
+                    if (clickHandlers.backClick) {
+                        const back = document.createElement('a-entity');
+                        back.classList.add('clickable');
+                        back.setAttribute('position', `0 -${options.height} 0`);
+                        back.innerHTML = `<a-plane color="#E74C3C" width="1.2" height="0.5" rounded="0.1"></a-plane><a-text value="Tillbaka" color="#FFF" align="center" width="2"></a-text>`;
+                        back.addEventListener('click', clickHandlers.backClick);
+                        mainMenu.appendChild(back);
+                    }
+                };
+
+                const createProfessionMenu = (category) => {
+                    createMenu(
+                        category.professions,
+                        { itemClick: (profession) => playVideo(profession.videoId), backClick: createCategoryMenu },
+                        { title: `Yrken inom ${category.category}`, radius: 3.5, width: 1.5, height: 0.6 }
+                    );
                 };
                 
                 const createCategoryMenu = () => {
-                    clearMenu();
-                    mainMenu.setAttribute('layout', 'type: circle; radius: 4; plane: xz; angle: 220');
-
-                    careerData.forEach(category => {
-                        const button = document.createElement('a-entity');
-                        button.classList.add('clickable');
-                        button.innerHTML = `<a-plane color="${category.color}" width="1.5" height="0.8" rounded="0.1" opacity="0.9"></a-plane><a-text value="${category.category}" color="#FFF" align="center" width="2.5"></a-text>`;
-                        button.addEventListener('click', () => createProfessionMenu(category));
-                        mainMenu.appendChild(button);
-                    });
-
-                    const title = document.createElement('a-entity');
-                    title.setAttribute('position', '0 2.5 -5');
-                    title.setAttribute('text', 'value: Valj en bransch att utforska; align: center; color: white; width: 6;');
-                    mainMenu.appendChild(title);
+                    const categories = careerData.map(c => ({ title: c.category, color: c.color, original: c }));
+                    createMenu(
+                        categories,
+                        { itemClick: (item) => createProfessionMenu(item.original) },
+                        { title: 'Valj en bransch att utforska', radius: 4, width: 1.5, height: 0.8 }
+                    );
                 };
 
-                // --- Funktioner för att hantera video ---
                 const playVideo = (videoId) => {
                     mainMenu.setAttribute('visible', 'false');
                     videoPlayer.setAttribute('src', `#${videoId}`);
@@ -204,13 +214,11 @@
                     backButton.setAttribute('visible', 'false');
                 };
 
-                // --- Starta allt ---
                 backButton.addEventListener('click', stopAndHideVideo);
-                createCategoryMenu(); // Starta med att bygga huvudmenyn
+                createCategoryMenu();
             }
         });
 
-        // Hanterar logik för att dölja/visa startsidan
         document.addEventListener('DOMContentLoaded', () => {
             const scene = document.querySelector('#vr-scene');
             const intro = document.querySelector('#intro');
