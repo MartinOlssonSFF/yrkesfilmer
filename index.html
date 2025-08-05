@@ -39,72 +39,73 @@
             <video id="video-lastbilsmekaniker" src="youtube://wK9yD8wX_1M" preload="auto" crossorigin="anonymous"></video>
         </a-assets>
 
-        <a-entity id="environment" environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1;"></a-entity>
-        <a-videosphere id="video-player" radius="99" visible="false" rotation="0 -90 0"></a-videosphere>
-        
         <a-camera>
             <a-cursor raycaster="objects: .clickable" fuse="true" fuse-timeout="1500">
-                <a-entity
-                    geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
-                    material="color: white; shader: flat"
+                <a-entity geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02" material="color: white; shader: flat"
                     animation__fusing="property: scale; from: 1 1 1; to: 0.2 0.2 0.2; startEvents: fusing; dur: 1500; easing: linear"
                     animation__mouseleave="property: scale; from: 0.2 0.2 0.2; to: 1 1 1; startEvents: mouseleave; dur: 200">
                 </a-entity>
             </a-cursor>
         </a-camera>
+        
+        <!-- NY STRUKTUR: En "vy" för menyn -->
+        <a-entity id="menu-view" visible="true">
+            <a-entity id="environment" environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1;"></a-entity>
+            <a-entity id="menu-container" position="0 1.6 -4">
+                
+                <a-entity id="category-menu" visible="true">
+                    <a-text value="Valj en bransch att utforska" align="center" width="6" position="0 1.5 0"></a-text>
+                    <a-entity position="-2 0 0"><a-plane color="#E74C3C" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Vard & Omsorg" align="center" width="3"></a-text><a-plane id="btn-cat-vard" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                    <a-entity position="0 0 0"><a-plane color="#F39C12" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Bygg & Anlaggning" align="center" width="3"></a-text><a-plane id="btn-cat-bygg" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                    <a-entity position="2 0 0"><a-plane color="#3498DB" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Industri & Teknik" align="center" width="3"></a-text><a-plane id="btn-cat-industri" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                    <a-entity position="-1 -1 0"><a-plane color="#9B59B6" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Transport & Fordon" align="center" width="3"></a-text><a-plane id="btn-cat-transport" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                    <a-entity position="1 -1 0"><a-plane color="#2ECC71" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Service & Natur" align="center" width="3"></a-text><a-plane id="btn-cat-service" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                </a-entity>
 
-        <!-- === HÅRDKODAT MENY-SYSTEM === -->
-        <a-entity id="menu-container" position="0 1.6 -4">
-            
-            <a-entity id="category-menu" visible="true">
-                <a-text value="Valj en bransch att utforska" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-2 0 0"><a-plane color="#E74C3C" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Vard & Omsorg" align="center" width="3"></a-text><a-plane id="btn-cat-vard" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="0 0 0"><a-plane color="#F39C12" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Bygg & Anlaggning" align="center" width="3"></a-text><a-plane id="btn-cat-bygg" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="2 0 0"><a-plane color="#3498DB" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Industri & Teknik" align="center" width="3"></a-text><a-plane id="btn-cat-industri" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="-1 -1 0"><a-plane color="#9B59B6" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Transport & Fordon" align="center" width="3"></a-text><a-plane id="btn-cat-transport" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 -1 0"><a-plane color="#2ECC71" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Service & Natur" align="center" width="3"></a-text><a-plane id="btn-cat-service" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-            </a-entity>
+                <a-entity id="profession-menu-vard" visible="false">
+                    <a-text value="Yrken inom Vard & Omsorg" align="center" width="6" position="0 1.5 0"></a-text>
+                    <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Ambulanssjukvardare" align="center" width="3"></a-text><a-plane id="btn-prof-ambulans" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                    <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Underskoterska" align="center" width="3"></a-text><a-plane id="btn-prof-usk" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                </a-entity>
 
-            <a-entity id="profession-menu-vard" visible="false">
-                <a-text value="Yrken inom Vard & Omsorg" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Ambulanssjukvardare" align="center" width="3"></a-text><a-plane id="btn-prof-ambulans" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Underskoterska" align="center" width="3"></a-text><a-plane id="btn-prof-usk" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-            </a-entity>
+                <a-entity id="profession-menu-bygg" visible="false">
+                    <a-text value="Yrken inom Bygg & Anlaggning" align="center" width="6" position="0 1.5 0"></a-text>
+                    <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Anlaggningsarbetare" align="center" width="3"></a-text><a-plane id="btn-prof-anlaggning" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                    <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Malare" align="center" width="3"></a-text><a-plane id="btn-prof-malare" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                </a-entity>
+                
+                <a-entity id="profession-menu-industri" visible="false">
+                    <a-text value="Yrken inom Industri & Teknik" align="center" width="6" position="0 1.5 0"></a-text>
+                    <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Maskinoperator" align="center" width="3"></a-text><a-plane id="btn-prof-maskin" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                    <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Svetsare" align="center" width="3"></a-text><a-plane id="btn-prof-svetsare" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                </a-entity>
 
-            <a-entity id="profession-menu-bygg" visible="false">
-                <a-text value="Yrken inom Bygg & Anlaggning" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Anlaggningsarbetare" align="center" width="3"></a-text><a-plane id="btn-prof-anlaggning" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Malare" align="center" width="3"></a-text><a-plane id="btn-prof-malare" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-            </a-entity>
-            
-            <a-entity id="profession-menu-industri" visible="false">
-                <a-text value="Yrken inom Industri & Teknik" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Maskinoperator" align="center" width="3"></a-text><a-plane id="btn-prof-maskin" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Svetsare" align="center" width="3"></a-text><a-plane id="btn-prof-svetsare" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-            </a-entity>
+                <a-entity id="profession-menu-transport" visible="false">
+                    <a-text value="Yrken inom Transport & Fordon" align="center" width="6" position="0 1.5 0"></a-text>
+                    <a-entity position="0 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Lastbilsmekaniker" align="center" width="3"></a-text><a-plane id="btn-prof-mekaniker" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                </a-entity>
 
-            <a-entity id="profession-menu-transport" visible="false">
-                <a-text value="Yrken inom Transport & Fordon" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="0 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Lastbilsmekaniker" align="center" width="3"></a-text><a-plane id="btn-prof-mekaniker" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity id="profession-menu-service" visible="false">
+                    <a-text value="Yrken inom Service & Natur" align="center" width="6" position="0 1.5 0"></a-text>
+                    <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Butikspersonal" align="center" width="3"></a-text><a-plane id="btn-prof-butik" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                    <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Djurvardare" align="center" width="3"></a-text><a-plane id="btn-prof-djur" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                </a-entity>
             </a-entity>
-
-            <a-entity id="profession-menu-service" visible="false">
-                <a-text value="Yrken inom Service & Natur" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Butikspersonal" align="center" width="3"></a-text><a-plane id="btn-prof-butik" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Djurvardare" align="center" width="3"></a-text><a-plane id="btn-prof-djur" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+            <a-entity id="restart-button" visible="false" position="0 -1.8 0">
+                <a-plane color="#f44336" width="1.2" height="0.4" rounded="0.1"></a-plane>
+                <a-text value="Starta Om" align="center" width="2.5"></a-text>
+                <a-plane class="clickable" material="opacity: 0" width="1.2" height="0.4"></a-plane>
             </a-entity>
         </a-entity>
         
-        <a-entity id="restart-button" visible="false" position="0 0.6 -4">
-            <a-plane color="#f44336" width="1.2" height="0.4" rounded="0.1"></a-plane>
-            <a-text value="Starta Om" align="center" width="2.5"></a-text>
-            <a-plane class="clickable" material="opacity: 0" width="1.2" height="0.4"></a-plane>
-        </a-entity>
-        
-        <a-entity id="video-back-button" visible="false" position="0 0.6 -4">
-            <a-plane color="#E74C3C" width="1.5" height="0.4" rounded="0.1"></a-plane>
-            <a-text value="Tillbaka till menyn" align="center" width="3"></a-text>
-            <a-plane class="clickable" material="opacity: 0" width="1.5" height="0.4"></a-plane>
+        <!-- NY STRUKTUR: En "vy" för videon -->
+        <a-entity id="video-view" visible="false">
+            <a-videosphere id="video-player" radius="99" rotation="0 -90 0"></a-videosphere>
+            <a-entity id="video-back-button" position="0 1.2 -3">
+                <a-plane color="#E74C3C" width="1.5" height="0.4" rounded="0.1"></a-plane>
+                <a-text value="Tillbaka till menyn" align="center" width="3"></a-text>
+                <a-plane class="clickable" material="opacity: 0" width="1.5" height="0.4"></a-plane>
+            </a-entity>
         </a-entity>
 
     </a-scene>
@@ -113,11 +114,14 @@
     document.addEventListener('DOMContentLoaded', () => {
         const intro = document.querySelector('#intro');
         const scene = document.querySelector('#vr-scene');
-        const menuContainer = document.querySelector('#menu-container');
+        
+        // Våra två huvudvyer
+        const menuView = document.querySelector('#menu-view');
+        const videoView = document.querySelector('#video-view');
+        
         const videoPlayer = document.querySelector('#video-player');
         const videoBackButton = document.querySelector('#video-back-button');
         const restartButton = document.querySelector('#restart-button');
-        const environment = document.querySelector('#environment');
 
         const categoryMenu = document.querySelector('#category-menu');
         const professionMenus = {
@@ -143,30 +147,23 @@
         };
 
         const playVideo = (videoId) => {
-            // Dölj menyerna
-            menuContainer.setAttribute('visible', false);
-            restartButton.setAttribute('visible', false);
-            
-            // Gör videospelaren synlig och spela upp
             videoPlayer.setAttribute('src', `#${videoId}`);
-            videoPlayer.setAttribute('visible', 'true');
             videoPlayer.components.youtube.play();
-
-            // Visa tillbaka-knappen för videon
-            videoBackButton.setAttribute('visible', 'true');
+            
+            // Byt från meny-vy till video-vy
+            menuView.setAttribute('visible', false);
+            videoView.setAttribute('visible', true);
         };
 
         const resetToMainMenu = () => {
-            // Stoppa och dölj videon
-            if (videoPlayer.getAttribute('visible')) {
+            if (videoPlayer.getAttribute('src')) { // Kontrollera om en video har spelats
                 videoPlayer.components.youtube.pause();
             }
-            videoPlayer.setAttribute('visible', 'false');
-            videoBackButton.setAttribute('visible', 'false');
             
-            // Visa huvudmenyn igen
-            menuContainer.setAttribute('visible', 'true');
-            showMenu(categoryMenu);
+            // Byt från video-vy till meny-vy
+            videoView.setAttribute('visible', false);
+            menuView.setAttribute('visible', 'true');
+            showMenu(categoryMenu); // Återställ till huvudmenyn
         };
 
         // --- Koppla klickhändelser ---
