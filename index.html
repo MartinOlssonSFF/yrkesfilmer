@@ -2,31 +2,23 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>VR Yrkeskollen - Förenklad Fix</title>
-    <meta name="description" content="Utforska olika yrken i 360-video med VR Yrkeskollen.">
+    <title>VR Yrkeskollen - Grundversion</title>
+    <meta name="description" content="En grundläggande version för att visa 360-yrkesvideor.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
     <script src="https://unpkg.com/aframe-youtube-component@^2.0.0/dist/aframe-youtube-component.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #282c34; color: #ffffff; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
-        .intro-container { max-width: 600px; padding: 2rem; }
-        h1 { font-size: 2.5rem; color: #61dafb; }
-        p { font-size: 1.2rem; line-height: 1.6; }
-        .callout { font-size: 1.4rem; font-weight: bold; color: #ffc107; margin-top: 2rem; }
-        .a-enter-vr-button { background-color: #61dafb !important; color: #282c34 !important; border-radius: 8px !important; font-weight: bold !important; font-size: 1.2rem !important; padding: 1rem 1.5rem !important; animation: pulse 2s infinite; margin-top: 1rem; }
-        @keyframes pulse { 0% { transform: scale(1); } 70% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        body { margin: 0; }
+        .a-enter-vr-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
-    <div class="intro-container" id="intro">
-        <h1>Välkommen till VR Yrkeskollen!</h1>
-        <p>Klicka på knappen nedan för att starta. Du kan se dig omkring med musen, mobilen eller med VR-glasögon.</p>
-        <p class="callout">👇 Klicka på den blåa knappen för att starta! 👇</p>
-    </div>
-
-    <a-scene id="vr-scene" vr-mode-ui="enabled: true; enterVRButton: .a-enter-vr-button" visible="false">
+    <a-scene id="vr-scene" background="color: #1A237E">
         <a-assets>
             <video id="video-ambulans" src="youtube://3e9q1jNQS-A" preload="auto" crossorigin="anonymous"></video>
             <video id="video-underskoterska" src="youtube://JpS6xY-o3kU" preload="auto" crossorigin="anonymous"></video>
@@ -40,83 +32,63 @@
         </a-assets>
 
         <a-camera>
-            <a-cursor raycaster="objects: .clickable" fuse="true" fuse-timeout="1500">
-                <a-entity geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02" material="color: white; shader: flat"
-                    animation__fusing="property: scale; from: 1 1 1; to: 0.2 0.2 0.2; startEvents: fusing; dur: 1500; easing: linear"
-                    animation__mouseleave="property: scale; from: 0.2 0.2 0.2; to: 1 1 1; startEvents: mouseleave; dur: 200">
-                </a-entity>
-            </a-cursor>
+            <a-cursor raycaster="objects: .clickable" fuse="true" fuse-timeout="1500"></a-cursor>
         </a-camera>
         
-        <!-- Miljön ligger alltid kvar -->
-        <a-entity id="environment" environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1;"></a-entity>
-        
         <!-- Videospelaren är alltid här, men osynlig från start -->
-        <a-videosphere id="video-player" radius="99" visible="false" rotation="0 -90 0"></a-videosphere>
+        <a-videosphere id="video-player" radius="10" visible="false" rotation="0 -90 0"></a-videosphere>
 
         <!-- Menyerna är också alltid här -->
-        <a-entity id="menu-container" position="0 1.6 -4" visible="true">
+        <a-entity id="menu-container" position="0 1.6 -3.5" visible="true">
+            <!-- Huvudmeny -->
             <a-entity id="category-menu" visible="true">
-                <a-text value="Valj en bransch att utforska" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-2 0 0"><a-plane color="#E74C3C" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Vard & Omsorg" align="center" width="3"></a-text><a-plane id="btn-cat-vard" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="0 0 0"><a-plane color="#F39C12" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Bygg & Anlaggning" align="center" width="3"></a-text><a-plane id="btn-cat-bygg" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="2 0 0"><a-plane color="#3498DB" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Industri & Teknik" align="center" width="3"></a-text><a-plane id="btn-cat-industri" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="-1 -1 0"><a-plane color="#9B59B6" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Transport & Fordon" align="center" width="3"></a-text><a-plane id="btn-cat-transport" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 -1 0"><a-plane color="#2ECC71" width="1.8" height="0.7" rounded="0.1"></a-plane><a-text value="Service & Natur" align="center" width="3"></a-text><a-plane id="btn-cat-service" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-text value="Valj en bransch" align="center" color="white" width="6" position="0 1.2 0"></a-text>
+                <a-entity position="-1.5 0.5 0"><a-plane color="#E74C3C" width="1.4" height="0.6"></a-plane><a-text value="Vard & Omsorg" align="center" color="white" width="2.5"></a-text><a-plane id="btn-cat-vard" class="clickable" material="opacity: 0" width="1.4" height="0.6"></a-plane></a-entity>
+                <a-entity position="0 0.5 0"><a-plane color="#F39C12" width="1.4" height="0.6"></a-plane><a-text value="Bygg" align="center" color="white" width="2.5"></a-text><a-plane id="btn-cat-bygg" class="clickable" material="opacity: 0" width="1.4" height="0.6"></a-plane></a-entity>
+                <a-entity position="1.5 0.5 0"><a-plane color="#3498DB" width="1.4" height="0.6"></a-plane><a-text value="Industri" align="center" color="white" width="2.5"></a-text><a-plane id="btn-cat-industri" class="clickable" material="opacity: 0" width="1.4" height="0.6"></a-plane></a-entity>
+                <a-entity position="-0.75 -0.2 0"><a-plane color="#9B59B6" width="1.4" height="0.6"></a-plane><a-text value="Transport" align="center" color="white" width="2.5"></a-text><a-plane id="btn-cat-transport" class="clickable" material="opacity: 0" width="1.4" height="0.6"></a-plane></a-entity>
+                <a-entity position="0.75 -0.2 0"><a-plane color="#2ECC71" width="1.4" height="0.6"></a-plane><a-text value="Service" align="center" color="white" width="2.5"></a-text><a-plane id="btn-cat-service" class="clickable" material="opacity: 0" width="1.4" height="0.6"></a-plane></a-entity>
             </a-entity>
 
+            <!-- Undermenyer -->
             <a-entity id="profession-menu-vard" visible="false">
-                <a-text value="Yrken inom Vard & Omsorg" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Ambulanssjukvardare" align="center" width="3"></a-text><a-plane id="btn-prof-ambulans" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Underskoterska" align="center" width="3"></a-text><a-plane id="btn-prof-usk" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Ambulans" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-ambulans" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Underskoterska" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-usk" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
             </a-entity>
-
             <a-entity id="profession-menu-bygg" visible="false">
-                <a-text value="Yrken inom Bygg & Anlaggning" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Anlaggningsarbetare" align="center" width="3"></a-text><a-plane id="btn-prof-anlaggning" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Malare" align="center" width="3"></a-text><a-plane id="btn-prof-malare" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Anlaggning" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-anlaggning" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Malare" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-malare" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
             </a-entity>
-            
             <a-entity id="profession-menu-industri" visible="false">
-                <a-text value="Yrken inom Industri & Teknik" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Maskinoperator" align="center" width="3"></a-text><a-plane id="btn-prof-maskin" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Svetsare" align="center" width="3"></a-text><a-plane id="btn-prof-svetsare" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Maskinoperator" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-maskin" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Svetsare" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-svetsare" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
             </a-entity>
-
             <a-entity id="profession-menu-transport" visible="false">
-                <a-text value="Yrken inom Transport & Fordon" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="0 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Lastbilsmekaniker" align="center" width="3"></a-text><a-plane id="btn-prof-mekaniker" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="0 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Lastbilsmekaniker" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-mekaniker" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
             </a-entity>
-
             <a-entity id="profession-menu-service" visible="false">
-                <a-text value="Yrken inom Service & Natur" align="center" width="6" position="0 1.5 0"></a-text>
-                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Butikspersonal" align="center" width="3"></a-text><a-plane id="btn-prof-butik" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
-                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Djurvardare" align="center" width="3"></a-text><a-plane id="btn-prof-djur" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Butikspersonal" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-butik" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
+                <a-entity position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Djurvardare" align="center" color="white" width="3"></a-text><a-plane id="btn-prof-djur" class="clickable" material="opacity: 0" width="1.8" height="0.7"></a-plane></a-entity>
             </a-entity>
         </a-entity>
         
-        <a-entity id="restart-button" visible="false" position="0 0.6 -4">
-            <a-plane color="#f44336" width="1.2" height="0.4" rounded="0.1"></a-plane>
-            <a-text value="Starta Om" align="center" width="2.5"></a-text>
+        <!-- Knappar för att starta om eller gå tillbaka -->
+        <a-entity id="restart-button" visible="false" position="0 0.8 -3.5">
+            <a-plane color="#f44336" width="1.2" height="0.4"></a-plane>
+            <a-text value="Starta Om" align="center" color="white" width="2.5"></a-text>
             <a-plane class="clickable" material="opacity: 0" width="1.2" height="0.4"></a-plane>
         </a-entity>
-        
         <a-entity id="video-back-button" visible="false" position="0 1.2 -3">
-            <a-plane color="#E74C3C" width="1.5" height="0.4" rounded="0.1"></a-plane>
-            <a-text value="Tillbaka till menyn" align="center" width="3"></a-text>
+            <a-plane color="#E74C3C" width="1.5" height="0.4"></a-plane>
+            <a-text value="Tillbaka till menyn" align="center" color="white" width="3"></a-text>
             <a-plane class="clickable" material="opacity: 0" width="1.5" height="0.4"></a-plane>
         </a-entity>
-
     </a-scene>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const intro = document.querySelector('#intro');
-        const scene = document.querySelector('#vr-scene');
-        
         const menuContainer = document.querySelector('#menu-container');
         const videoPlayer = document.querySelector('#video-player');
-        
         const videoBackButton = document.querySelector('#video-back-button');
         const restartButton = document.querySelector('#restart-button');
 
@@ -135,12 +107,7 @@
                 professionMenus[key].setAttribute('visible', false);
             }
             menuToShow.setAttribute('visible', true);
-
-            if (menuToShow === categoryMenu) {
-                restartButton.setAttribute('visible', false);
-            } else {
-                restartButton.setAttribute('visible', 'true');
-            }
+            restartButton.setAttribute('visible', menuToShow !== categoryMenu);
         };
 
         const playVideo = (videoId) => {
@@ -155,7 +122,7 @@
                 if (youtubeComponent) {
                     youtubeComponent.play();
                 }
-            }, 250);
+            }, 500);
 
             videoBackButton.setAttribute('visible', 'true');
         };
@@ -174,7 +141,6 @@
             showMenu(categoryMenu);
         };
 
-        // --- Koppla klickhändelser ---
         videoBackButton.addEventListener('click', resetToMainMenu);
         restartButton.addEventListener('click', resetToMainMenu);
 
@@ -193,9 +159,6 @@
         document.querySelector('#btn-prof-mekaniker').addEventListener('click', () => playVideo('video-lastbilsmekaniker'));
         document.querySelector('#btn-prof-butik').addEventListener('click', () => playVideo('video-butik'));
         document.querySelector('#btn-prof-djur').addEventListener('click', () => playVideo('video-djurvardare'));
-        
-        scene.addEventListener('enter-vr', () => { intro.style.display = 'none'; scene.setAttribute('visible', 'true'); });
-        scene.addEventListener('exit-vr', () => { intro.style.display = 'flex'; scene.setAttribute('visible', 'false'); });
     });
     </script>
 </body>
