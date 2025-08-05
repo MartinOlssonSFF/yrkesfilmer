@@ -2,37 +2,183 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>VR Yrkeskollen - Diagnostiskt Test</title>
+    <title>VR Yrkeskollen</title>
+    <meta name="description" content="Utforska olika yrken i 360-video med VR Yrkeskollen.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-youtube-component@^2.0.0/dist/aframe-youtube-component.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #282c34; color: #ffffff; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
+        .intro-container { max-width: 600px; padding: 2rem; }
+        h1 { font-size: 2.5rem; color: #61dafb; }
+        p { font-size: 1.2rem; line-height: 1.6; }
+        .callout { font-size: 1.4rem; font-weight: bold; color: #ffc107; margin-top: 2rem; }
+        .a-enter-vr-button { background-color: #61dafb !important; color: #282c34 !important; border-radius: 8px !important; font-weight: bold !important; font-size: 1.2rem !important; padding: 1rem 1.5rem !important; animation: pulse 2s infinite; margin-top: 1rem; }
+        @keyframes pulse { 0% { transform: scale(1); } 70% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
 </head>
 <body>
-    <a-scene>
-        <!-- Enkel miljö -->
-        <a-entity environment="preset: dream;"></a-entity>
+    <div class="intro-container" id="intro">
+        <h1>Välkommen till VR Yrkeskollen!</h1>
+        <p>Klicka på knappen nedan för att starta. Du kan se dig omkring med musen, mobilen eller med VR-glasögon.</p>
+        <p class="callout">👇 Klicka på den blåa knappen för att starta! 👇</p>
+    </div>
 
-        <!-- En enda, simpel knapp som är hårdkodad direkt i HTML. -->
-        <!-- Denna använder INGEN avancerad JavaScript för att skapas. -->
-        <a-entity position="0 1.6 -3">
-            <a-plane 
-                color="#4285F4" 
-                width="1.2" 
-                height="0.6" 
-                rounded="0.1">
-            </a-plane>
-            <a-text 
-                value="Testknapp" 
-                color="#FFFFFF" 
-                align="center" 
-                width="2.5">
-            </a-text>
+    <a-scene id="vr-scene" vr-mode-ui="enabled: true; enterVRButton: .a-enter-vr-button" visible="false">
+        <a-assets>
+            <video id="video-ambulans" src="youtube://3e9q1jNQS-A" preload="auto" crossorigin="anonymous"></video>
+            <video id="video-underskoterska" src="youtube://JpS6xY-o3kU" preload="auto" crossorigin="anonymous"></video>
+            <video id="video-anlaggningsarbetare" src="youtube://9bX-hZCpqjY" preload="auto" crossorigin="anonymous"></video>
+            <video id="video-malare" src="youtube://j7fP4yK2vL0" preload="auto" crossorigin="anonymous"></video>
+            <video id="video-maskinoperator" src="youtube://5H8r7yI0hT4" preload="auto" crossorigin="anonymous"></video>
+            <video id="video-svetsare" src="youtube://o8M9iN3rTzM" preload="auto" crossorigin="anonymous"></video>
+            <video id="video-butik" src="youtube://tG5a8fN9wYk" preload="auto" crossorigin="anonymous"></video>
+            <video id="video-djurvardare" src="youtube://R5o-X8cQ4q0" preload="auto" crossorigin="anonymous"></video>
+            <video id="video-lastbilsmekaniker" src="youtube://wK9yD8wX_1M" preload="auto" crossorigin="anonymous"></video>
+        </a-assets>
+
+        <a-entity environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1"></a-entity>
+        <a-videosphere id="video-player" radius="99" visible="false" rotation="0 -90 0"></a-videosphere>
+        <a-camera><a-cursor raycaster="objects: .clickable" fuse="true" fuse-timeout="1500"></a-cursor></a-camera>
+
+        <!-- === HÅRDKODAT MENY-SYSTEM === -->
+        <a-entity id="menu-container" position="0 1.6 -4">
+            
+            <!-- Huvudmeny (Branscher) - Synlig från start -->
+            <a-entity id="category-menu" visible="true">
+                <a-text value="Valj en bransch att utforska" align="center" width="6" position="0 1.5 0"></a-text>
+                <!-- Knapp 1 -->
+                <a-entity id="btn-cat-vard" class="clickable" position="-2 0 0">
+                    <a-plane color="#E74C3C" width="1.8" height="0.7" rounded="0.1"></a-plane>
+                    <a-text value="Vard & Omsorg" align="center" width="3"></a-text>
+                </a-entity>
+                <!-- Knapp 2 -->
+                <a-entity id="btn-cat-bygg" class="clickable" position="0 0 0">
+                    <a-plane color="#F39C12" width="1.8" height="0.7" rounded="0.1"></a-plane>
+                    <a-text value="Bygg & Anlaggning" align="center" width="3"></a-text>
+                </a-entity>
+                <!-- Knapp 3 -->
+                <a-entity id="btn-cat-industri" class="clickable" position="2 0 0">
+                    <a-plane color="#3498DB" width="1.8" height="0.7" rounded="0.1"></a-plane>
+                    <a-text value="Industri & Teknik" align="center" width="3"></a-text>
+                </a-entity>
+                <!-- Knapp 4 -->
+                <a-entity id="btn-cat-transport" class="clickable" position="-1 -1 0">
+                    <a-plane color="#9B59B6" width="1.8" height="0.7" rounded="0.1"></a-plane>
+                    <a-text value="Transport & Fordon" align="center" width="3"></a-text>
+                </a-entity>
+                <!-- Knapp 5 -->
+                <a-entity id="btn-cat-service" class="clickable" position="1 -1 0">
+                    <a-plane color="#2ECC71" width="1.8" height="0.7" rounded="0.1"></a-plane>
+                    <a-text value="Service & Natur" align="center" width="3"></a-text>
+                </a-entity>
+            </a-entity>
+
+            <!-- Undermeny: Vård (Dold från start) -->
+            <a-entity id="profession-menu-vard" visible="false">
+                <a-text value="Yrken inom Vard & Omsorg" align="center" width="6" position="0 1.5 0"></a-text>
+                <a-entity id="btn-prof-ambulans" class="clickable" position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Ambulanssjukvardare" align="center" width="3"></a-text></a-entity>
+                <a-entity id="btn-prof-usk" class="clickable" position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Underskoterska" align="center" width="3"></a-text></a-entity>
+                <a-entity class="back-button clickable" position="0 -1 0"><a-plane color="#E74C3C" width="1.2" height="0.5"></a-plane><a-text value="Tillbaka" align="center" width="2.5"></a-text></a-entity>
+            </a-entity>
+
+            <!-- Undermeny: Bygg (Dold från start) -->
+            <a-entity id="profession-menu-bygg" visible="false">
+                <a-text value="Yrken inom Bygg & Anlaggning" align="center" width="6" position="0 1.5 0"></a-text>
+                <a-entity id="btn-prof-anlaggning" class="clickable" position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Anlaggningsarbetare" align="center" width="3"></a-text></a-entity>
+                <a-entity id="btn-prof-malare" class="clickable" position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Malare" align="center" width="3"></a-text></a-entity>
+                <a-entity class="back-button clickable" position="0 -1 0"><a-plane color="#E74C3C" width="1.2" height="0.5"></a-plane><a-text value="Tillbaka" align="center" width="2.5"></a-text></a-entity>
+            </a-entity>
+            
+            <!-- Fler undermenyer här... (Industri, Transport, Service) -->
+            <a-entity id="profession-menu-industri" visible="false">
+                <a-text value="Yrken inom Industri & Teknik" align="center" width="6" position="0 1.5 0"></a-text>
+                <a-entity id="btn-prof-maskin" class="clickable" position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Maskinoperator" align="center" width="3"></a-text></a-entity>
+                <a-entity id="btn-prof-svetsare" class="clickable" position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Svetsare" align="center" width="3"></a-text></a-entity>
+                <a-entity class="back-button clickable" position="0 -1 0"><a-plane color="#E74C3C" width="1.2" height="0.5"></a-plane><a-text value="Tillbaka" align="center" width="2.5"></a-text></a-entity>
+            </a-entity>
+
+            <a-entity id="profession-menu-transport" visible="false">
+                <a-text value="Yrken inom Transport & Fordon" align="center" width="6" position="0 1.5 0"></a-text>
+                <a-entity id="btn-prof-mekaniker" class="clickable" position="0 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Lastbilsmekaniker" align="center" width="3"></a-text></a-entity>
+                <a-entity class="back-button clickable" position="0 -1 0"><a-plane color="#E74C3C" width="1.2" height="0.5"></a-plane><a-text value="Tillbaka" align="center" width="2.5"></a-text></a-entity>
+            </a-entity>
+
+            <a-entity id="profession-menu-service" visible="false">
+                <a-text value="Yrken inom Service & Natur" align="center" width="6" position="0 1.5 0"></a-text>
+                <a-entity id="btn-prof-butik" class="clickable" position="-1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Butikspersonal" align="center" width="3"></a-text></a-entity>
+                <a-entity id="btn-prof-djur" class="clickable" position="1 0 0"><a-plane color="#555" width="1.8" height="0.7"></a-plane><a-text value="Djurvardare" align="center" width="3"></a-text></a-entity>
+                <a-entity class="back-button clickable" position="0 -1 0"><a-plane color="#E74C3C" width="1.2" height="0.5"></a-plane><a-text value="Tillbaka" align="center" width="2.5"></a-text></a-entity>
+            </a-entity>
+
         </a-entity>
-
-        <!-- Kamera med pekare -->
-        <a-camera>
-            <a-cursor></a-cursor>
-        </a-camera>
     </a-scene>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const intro = document.querySelector('#intro');
+        const scene = document.querySelector('#vr-scene');
+        const menuContainer = document.querySelector('#menu-container');
+        const videoPlayer = document.querySelector('#video-player');
+
+        // Menyer
+        const categoryMenu = document.querySelector('#category-menu');
+        const professionMenus = {
+            vard: document.querySelector('#profession-menu-vard'),
+            bygg: document.querySelector('#profession-menu-bygg'),
+            industri: document.querySelector('#profession-menu-industri'),
+            transport: document.querySelector('#profession-menu-transport'),
+            service: document.querySelector('#profession-menu-service'),
+        };
+
+        // Funktion för att byta meny
+        const showMenu = (menuToShow) => {
+            categoryMenu.setAttribute('visible', false);
+            for (const key in professionMenus) {
+                professionMenus[key].setAttribute('visible', false);
+            }
+            menuToShow.setAttribute('visible', true);
+        };
+
+        // Funktion för att spela video
+        const playVideo = (videoId) => {
+            menuContainer.setAttribute('visible', false);
+            videoPlayer.setAttribute('src', `#${videoId}`);
+            videoPlayer.setAttribute('visible', 'true');
+            videoPlayer.components.youtube.play();
+        };
+
+        // --- Koppla klickhändelser ---
+
+        // Kategori-knappar
+        document.querySelector('#btn-cat-vard').addEventListener('click', () => showMenu(professionMenus.vard));
+        document.querySelector('#btn-cat-bygg').addEventListener('click', () => showMenu(professionMenus.bygg));
+        document.querySelector('#btn-cat-industri').addEventListener('click', () => showMenu(professionMenus.industri));
+        document.querySelector('#btn-cat-transport').addEventListener('click', () => showMenu(professionMenus.transport));
+        document.querySelector('#btn-cat-service').addEventListener('click', () => showMenu(professionMenus.service));
+
+        // Tillbaka-knappar
+        document.querySelectorAll('.back-button').forEach(button => {
+            button.addEventListener('click', () => showMenu(categoryMenu));
+        });
+
+        // Yrkes-knappar
+        document.querySelector('#btn-prof-ambulans').addEventListener('click', () => playVideo('video-ambulans'));
+        document.querySelector('#btn-prof-usk').addEventListener('click', () => playVideo('video-underskoterska'));
+        document.querySelector('#btn-prof-anlaggning').addEventListener('click', () => playVideo('video-anlaggningsarbetare'));
+        document.querySelector('#btn-prof-malare').addEventListener('click', () => playVideo('video-malare'));
+        document.querySelector('#btn-prof-maskin').addEventListener('click', () => playVideo('video-maskinoperator'));
+        document.querySelector('#btn-prof-svetsare').addEventListener('click', () => playVideo('video-svetsare'));
+        document.querySelector('#btn-prof-mekaniker').addEventListener('click', () => playVideo('video-lastbilsmekaniker'));
+        document.querySelector('#btn-prof-butik').addEventListener('click', () => playVideo('video-butik'));
+        document.querySelector('#btn-prof-djur').addEventListener('click', () => playVideo('video-djurvardare'));
+        
+        // Logik för att starta/stoppa scenen
+        scene.addEventListener('enter-vr', () => { intro.style.display = 'none'; scene.setAttribute('visible', 'true'); });
+        scene.addEventListener('exit-vr', () => { intro.style.display = 'flex'; scene.setAttribute('visible', 'false'); });
+    });
+    </script>
 </body>
 </html>
