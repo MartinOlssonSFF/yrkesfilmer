@@ -39,7 +39,7 @@
             <video id="video-lastbilsmekaniker" src="youtube://wK9yD8wX_1M" preload="auto" crossorigin="anonymous"></video>
         </a-assets>
 
-        <a-entity id="environment" environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1"></a-entity>
+        <a-entity id="environment" environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1; active: true"></a-entity>
         <a-videosphere id="video-player" radius="99" visible="false" rotation="0 -90 0"></a-videosphere>
         
         <a-camera>
@@ -95,7 +95,6 @@
             </a-entity>
         </a-entity>
         
-        <!-- NYTT: Omstartsknapp med fast position i världen -->
         <a-entity id="restart-button" visible="false" position="0 0.6 -4">
             <a-plane color="#f44336" width="1.2" height="0.4" rounded="0.1"></a-plane>
             <a-text value="Starta Om" align="center" width="2.5"></a-text>
@@ -130,15 +129,12 @@
         };
 
         const showMenu = (menuToShow) => {
-            // Dölj allt först
             categoryMenu.setAttribute('visible', false);
             for (const key in professionMenus) {
                 professionMenus[key].setAttribute('visible', false);
             }
-            // Visa sedan den önskade menyn
             menuToShow.setAttribute('visible', true);
 
-            // Hantera synlighet för omstartsknappen
             if (menuToShow === categoryMenu) {
                 restartButton.setAttribute('visible', false);
             } else {
@@ -149,7 +145,9 @@
         const playVideo = (videoId) => {
             menuContainer.setAttribute('visible', false);
             restartButton.setAttribute('visible', false);
-            environment.setAttribute('visible', false); // Dölj miljön för att videon ska synas
+            
+            // NYCKELÄNDRING: Inaktivera miljön istället för att dölja den.
+            environment.setAttribute('environment', 'active', false);
 
             videoPlayer.setAttribute('src', `#${videoId}`);
             videoPlayer.setAttribute('visible', 'true');
@@ -162,12 +160,11 @@
             if (videoPlayer.getAttribute('visible')) {
                 videoPlayer.components.youtube.pause();
             }
-            // Dölj video-relaterade saker
             videoPlayer.setAttribute('visible', 'false');
             videoBackButton.setAttribute('visible', 'false');
             
-            // Visa meny-relaterade saker
-            environment.setAttribute('visible', 'true'); 
+            // NYCKELÄNDRING: Återaktivera miljön.
+            environment.setAttribute('environment', 'active', true); 
             menuContainer.setAttribute('visible', 'true');
             showMenu(categoryMenu);
         };
@@ -181,8 +178,6 @@
         document.querySelector('#btn-cat-industri').addEventListener('click', () => showMenu(professionMenus.industri));
         document.querySelector('#btn-cat-transport').addEventListener('click', () => showMenu(professionMenus.transport));
         document.querySelector('#btn-cat-service').addEventListener('click', () => showMenu(professionMenus.service));
-
-        // Tillbaka-knappar i undermenyer finns inte längre, ersatta av globala omstartsknappen
 
         document.querySelector('#btn-prof-ambulans').addEventListener('click', () => playVideo('video-ambulans'));
         document.querySelector('#btn-prof-usk').addEventListener('click', () => playVideo('video-underskoterska'));
