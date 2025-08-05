@@ -39,7 +39,7 @@
             <video id="video-lastbilsmekaniker" src="youtube://wK9yD8wX_1M" preload="auto" crossorigin="anonymous"></video>
         </a-assets>
 
-        <a-entity id="environment" environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1; active: true"></a-entity>
+        <a-entity id="environment" environment="preset: dream; ground: hills; dressing: trees; skyType: atmosphere; sunPosition: 1 1 -1;"></a-entity>
         <a-videosphere id="video-player" radius="99" visible="false" rotation="0 -90 0"></a-videosphere>
         
         <a-camera>
@@ -143,28 +143,28 @@
         };
 
         const playVideo = (videoId) => {
+            // Dölj menyerna
             menuContainer.setAttribute('visible', false);
             restartButton.setAttribute('visible', false);
             
-            // NYCKELÄNDRING: Inaktivera miljön istället för att dölja den.
-            environment.setAttribute('environment', 'active', false);
-
+            // Gör videospelaren synlig och spela upp
             videoPlayer.setAttribute('src', `#${videoId}`);
             videoPlayer.setAttribute('visible', 'true');
             videoPlayer.components.youtube.play();
 
+            // Visa tillbaka-knappen för videon
             videoBackButton.setAttribute('visible', 'true');
         };
 
         const resetToMainMenu = () => {
+            // Stoppa och dölj videon
             if (videoPlayer.getAttribute('visible')) {
                 videoPlayer.components.youtube.pause();
             }
             videoPlayer.setAttribute('visible', 'false');
             videoBackButton.setAttribute('visible', 'false');
             
-            // NYCKELÄNDRING: Återaktivera miljön.
-            environment.setAttribute('environment', 'active', true); 
+            // Visa huvudmenyn igen
             menuContainer.setAttribute('visible', 'true');
             showMenu(categoryMenu);
         };
